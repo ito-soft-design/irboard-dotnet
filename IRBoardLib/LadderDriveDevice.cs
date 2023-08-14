@@ -49,4 +49,16 @@ public class LadderDriveDevice {
 
   public bool IsAvailable { get; private set; } = false;
 
+  public string Name {
+    get {
+      switch (Prefix) {
+        case "X":
+        case "Y":
+          return $"{Prefix}{Number.ToString("X")}";
+        default:
+          return $"{Prefix}{Number}";
+      }
+    }
+  }
+
 }

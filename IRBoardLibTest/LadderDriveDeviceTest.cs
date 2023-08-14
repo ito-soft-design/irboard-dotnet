@@ -167,6 +167,24 @@ public class LadderDriveDeviceTest
 
       Assert.IsTrue(new LadderDriveDevice("ts255").IsAvailable);
     }
+
+    [TestMethod]
+    public void X_Name()
+    {
+      Assert.AreEqual("XA", new LadderDriveDevice("XA").Name);
+      Assert.AreEqual("XA", new LadderDriveDevice("X0A").Name);
+      Assert.AreEqual("XA", new LadderDriveDevice("X00A").Name);
+    }
+
+    [TestMethod]
+    public void D_Name()
+    {
+      Assert.AreEqual("D123", new LadderDriveDevice("D123").Name);
+      Assert.AreEqual("D123", new LadderDriveDevice("D0123").Name);
+      Assert.AreEqual("D123", new LadderDriveDevice("D0123").Name);
+    }
+
+
 }
 
  
