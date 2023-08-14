@@ -4,7 +4,7 @@ using System.Text.RegularExpressions;
 public class LadderDriveDevice {
 
   public LadderDriveDevice(string name) {
-    var pattern = "^(X)([0-9a-f]+)$";
+    var pattern = "^(X|Y|M|D|L|H|SC|SD|CC|CS|C|TC|TS|T)([0-9a-f]+)$";
     var matches = Regex.Matches(name, pattern, RegexOptions.IgnoreCase);
     if (matches.Count != 0) {
       var match = matches[0];
@@ -19,10 +19,25 @@ public class LadderDriveDevice {
             }
           } catch {}
           break;
+        case "C":
+        case "CC":
+        case "CS":
+        case "T":
+        case "TC":
+        case "TS":
+          try {
+            Number = int.Parse(match.Groups[2].Value);
+            if (Number < 256) {
+              IsAvailable = true;
+            }
+          } catch {}
+          break;
         default:
           try {
             Number = int.Parse(match.Groups[2].Value);
-            IsAvailable = true;
+            if (Number < 1024) {
+              IsAvailable = true;
+            }
           } catch {}
           break;
       }
