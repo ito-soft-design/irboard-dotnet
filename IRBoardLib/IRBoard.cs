@@ -1,6 +1,7 @@
 ﻿namespace IRBoardLib;
 
 using System;
+using System.Text;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
@@ -62,6 +63,7 @@ public class IRBoard
     if (elements.Length != 2) { return "E1"; }
     var a = elements[1].Split(".");
     var d = new LadderDriveDevice(a[0]);
+    if (d.IsAvailable == false) { return "E1"; }
     var format = a.Length >= 2 && a[1].ToUpper() == "H" ? "X" : "";
     return GetValueOfDevice(d).ToString(format);
   }
@@ -69,96 +71,144 @@ public class IRBoard
   private string RdsResponse(string[] elements) {
     if (elements.Length != 3) { return "E1"; }
 
-    try { 
-      var a = elements[1].Split(".");
-      var d = new LadderDriveDevice(a[0]);
-      var c = int.Parse(elements[2]);
-      string[] res = new string[c];
-      var format = a.Length >= 2 && a[1].ToUpper() == "H" ? "X" : "";
+    var a = elements[1].Split(".");
+    var d = new LadderDriveDevice(a[0]);
+    var c = int.Parse(elements[2]);
+    string[] res = new string[c];
+    var format = a.Length >= 2 && a[1].ToUpper() == "H" ? "X" : "";
 
-      for (int i = 0; i < c; i++) {
-        res[i] = GetValueOfDevice(d).ToString(format);
-        d = d.NextDevice;
-      }
-      return string.Join(" ", res);
-    } catch {
-      return "E1";
+    for (int i = 0; i < c; i++) {
+      if (d.IsAvailable == false) { return "E1"; }
+      res[i] = GetValueOfDevice(d).ToString(format);
+      d = d.NextDevice;
     }
+    return string.Join(" ", res);
   }
   
   private string StResponse(string[] elements) {
-    if (elements.Length > 2) { return "E1"; }
+    if (elements.Length != 2) { return "E1"; }
+    var d = new LadderDriveDevice(elements[1]);
+    if (d.IsAvailable == false) { return "E1"; }
+    SetValueToDevice(1, d);
     return "OK";
   }
   
   private string RsResponse(string[] elements) {
-    if (elements.Length > 2) { return "E1"; }
+    if (elements.Length != 2) { return "E1"; }
+    var d = new LadderDriveDevice(elements[1]);
+    if (d.IsAvailable == false) { return "E1"; }
+    SetValueToDevice(0, d);
     return "OK";
   }
   
   private string WrResponse(string[] elements) {
-    if (elements.Length > 2) { return "E1"; }
+    if (elements.Length != 3) { return "E1"; }
+    var a = elements[1].Split(".");
+    var d = new LadderDriveDevice(a[0]);
+    if (d.IsAvailable == false) { return "E1"; }
+    if (a.Length >= 2 && a[1].ToUpper() == "H") {
+      UInt16 val = UInt16.Parse(elements[2], System.Globalization.NumberStyles.HexNumber);
+      SetValueToDevice(val, d);
+    } else {
+      UInt16 val = UInt16.Parse(elements[2]);
+      SetValueToDevice(val, d);
+    }
     return "OK";
   }
   
   private string WrsResponse(string[] elements) {
-    if (elements.Length > 2) { return "E1"; }
+    if (elements.Length < 3) { return "E1"; }
+    var a = elements[1].Split(".");
+    var d = new LadderDriveDevice(a[0]);
+    if (d.IsAvailable == false) { return "E1"; }
+    var c = int.Parse(elements[2]);
+    if (elements.Length != 3 + c) { return "E1"; }
+    var hex = a.Length >= 2 && a[1].ToUpper() == "H";
+    for (int i = 0; i < c; i++) {
+      if (hex) {
+        UInt16 val = UInt16.Parse(elements[3 + i], System.Globalization.NumberStyles.HexNumber);
+        SetValueToDevice(val, d);
+      } else {
+        UInt16 val = UInt16.Parse(elements[3 + i]);
+        SetValueToDevice(val, d);
+      }
+      d = d.NextDevice;
+    }
     return "OK";
   }
   
   private static async Task HandleClientAsync(IRBoard board, TcpClient client)
   {
-      try
+    DateTime connectedAt = DateTime.Now;
+
+    try
+    {
+      using (NetworkStream stream = client.GetStream())
       {
-          using (NetworkStream stream = client.GetStream())
-          {
-            using (StreamReader reader = new StreamReader(stream)) {
-              using (StreamWriter writer = new StreamWriter(stream)) {
-                while(true) {
-                  string message = reader.ReadLine();
-                  if (message != null) {
-                    var elements = message.Split(' ');
-                    var response = "";
-                    switch (elements[0].ToUpper()) {
-                      case "RD":
-                        response = board.RdResponse(elements);
-                        break;
-                      case "RDS":
-                        response = board.RdsResponse(elements);
-                        break;
-                      case "ST":
-                        response = board.StResponse(elements);
-                        break;
-                      case "RS":
-                        response = board.RsResponse(elements);
-                        break;
-                      case "WR":
-                        response = board.WrResponse(elements);
-                        break;
-                      case "WRS":
-                        response = board.WrsResponse(elements);
-                        break;
-                      default:
-                        response = "E1";
-                        break;
-                    }
-                    writer.WriteLine(response);
-                    writer.Flush();
+        using (StreamReader reader = new StreamReader(stream, Encoding.ASCII)) {
+          using (StreamWriter writer = new StreamWriter(stream)) {
+            while(true) {
+              string message = reader.ReadLine();
+              if (message != null) {
+                var elements = message.Split(' ');
+                var response = "";
+                try {
+                  switch (elements[0].ToUpper()) {
+                    case "RD":
+                      response = board.RdResponse(elements);
+                      break;
+                    case "RDS":
+                      response = board.RdsResponse(elements);
+                      break;
+                    case "ST":
+                      response = board.StResponse(elements);
+                      break;
+                    case "RS":
+                      response = board.RsResponse(elements);
+                      break;
+                    case "WR":
+                      response = board.WrResponse(elements);
+                      break;
+                    case "WRS":
+                      response = board.WrsResponse(elements);
+                      break;
+                    default:
+                      response = "E1";
+                      break;
                   }
+                } catch (ArgumentNullException) {
+                  response = "E1";
+                } catch (ArgumentException) {
+                  response = "E1";
+                } catch (FormatException) {
+                  response = "E1";
+                } catch (OverflowException) {
+                  response = "E1";
                 }
+                writer.Write(response + "\r\n");
+                writer.Flush();
               }
+
+              // check timeout
+              var now = DateTime.Now;
+              if ((now - connectedAt).TotalSeconds > 5) {
+                break;
+              }
+
+              Thread.Sleep(10);
             }
           }
+        }
       }
-      catch (Exception ex)
-      {
-          Console.WriteLine("クライアントとの通信中にエラーが発生しました: " + ex.Message);
-      }
-      finally
-      {
-          // クライアントとの通信が終了したら、接続を閉じる
-          client.Close();
-      }
+    }
+    catch (Exception ex)
+    {
+      Console.WriteLine("An error was occurred connecting with a client: " + ex.Message);
+    }
+    finally
+    {
+      client.Close();
+    }
   }
 
   public void Stop() {

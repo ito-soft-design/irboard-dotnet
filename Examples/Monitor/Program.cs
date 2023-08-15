@@ -4,7 +4,7 @@ class Program
 {
     static void Main(string[] args)
     {
-        ResetConsole();
+        PrintUses();
 
         IRBoard irboard = new IRBoard();
         irboard.Run();
@@ -12,7 +12,6 @@ class Program
         do
         {
             string? input = Console.ReadLine();
-            if (string.IsNullOrEmpty(input)) break;
             Console.WriteLine($"Input: {input}");
             if (input == "quit") {
               irboard.Stop();
@@ -21,11 +20,17 @@ class Program
         } while (true);
         return;
 
-        // Declare a ResetConsole local method
-        void ResetConsole()
-        {
+        void PrintUses() {
             Console.Clear();
-            Console.WriteLine($"{Environment.NewLine}Press <Enter> only to exit; otherwise, enter a string and press <Enter>:{Environment.NewLine}");
+            Console.WriteLine(
+@"
+
+Waiting a connection from irBoard. 
+If you want to quit; input 'quit' and press the 'return' key.
+"
+            );
+
         }
+
     }
 }
