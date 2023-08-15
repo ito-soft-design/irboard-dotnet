@@ -150,6 +150,7 @@ public class IRBoard
             while(true) {
               string message = reader.ReadLine();
               if (message != null) {
+                connectedAt = DateTime.Now;
                 var elements = message.Split(' ');
                 var response = "";
                 try {
