@@ -337,19 +337,20 @@ public class IRBoard
       if (word.highByteValue == 0) {
         return res;
       }
-      res += (char)word.lowByteValue;
+      res += (char)word.highByteValue;
       if (word.lowByteValue == 0) {
         return res;
       }
       res += (char)word.lowByteValue;
+      d = d.NextDevice;
     }
-    return "";
   }
 
   public void SetStringValueTo(string str, string device) {
     var word = new WordValue();
     var d = new LadderDriveDevice(device);
     var index = 0;
+    bool terminated = false;
     foreach(char ch in str) {
       if (d.IsAvailable == false) { return; }
       if (index % 2 == 0) {
@@ -357,17 +358,22 @@ public class IRBoard
         word.highByteValue = (byte)ch;
         if (word.highByteValue == 0) {
           SetValueToDevice(word.uint16Value, d);
+          terminated = true;
           break;
         }
       } else {
         word.lowByteValue = (byte)ch;
         SetValueToDevice(word.uint16Value, d);
         if (word.lowByteValue == 0) {
+          terminated = true;
           break;
         }
         d = d.NextDevice;
       }
       index++;
+    }
+    if (terminated == false) {
+      SetValueToDevice((UInt16)0, d);
     }
   }
 
