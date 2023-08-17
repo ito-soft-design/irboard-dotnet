@@ -7,6 +7,33 @@ using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Text.RegularExpressions;
+using System.Runtime.InteropServices;
+
+// @see: https://stackoverflow.com/questions/9318019/int-to-float-pointers
+// @see: http://komina.so.land.to/?CSharp%2F%B6%A6%CD%D1%C2%CE
+[StructLayout(LayoutKind.Explicit)]
+struct WordValue
+{
+    [FieldOffset(0)]
+    public UInt16 uint16Value;
+    [FieldOffset(0)]
+    public Int16 int16Value;
+    [FieldOffset(0)]
+    public byte lowByteValue;
+    [FieldOffset(1)]
+    public byte highByteValue;
+}
+
+[StructLayout(LayoutKind.Explicit)]
+struct DWordValue
+{
+    [FieldOffset(0)]
+    public UInt32 uint32Value;
+    [FieldOffset(0)]
+    public Int32 int32Value;
+    [FieldOffset(0)]
+    public float floatValue;
+}
 
 
 public class IRBoard
@@ -217,12 +244,131 @@ public class IRBoard
     listener.Stop();
   }
 
-  public int IntValue(string device) {
-    return 0;
+  public bool BoolValueOf(string device) {
+    var d = new LadderDriveDevice(device);
+    if (d.IsAvailable == false) { return false; }
+    return GetValueOfDevice(d) != 0;
   }
 
-  public bool BoolValue(string device) {
-    return false;
+  public void SetBoolValueTo(bool value, string device) {
+    var d = new LadderDriveDevice(device);
+    if (d.IsAvailable == false) { return; }
+    SetValueToDevice((UInt16)(value ? 1 : 0), d);
+  }
+
+  public UInt32 UInt32ValueOf(string device) {
+    var d = new LadderDriveDevice(device);
+    if (d.IsAvailable == false) { return 0; }
+    UInt32 lval = (UInt32)GetValueOfDevice(d);
+
+    d = d.NextDevice;
+    if (d.IsAvailable == false) { return 0; }
+    UInt32 hval = (UInt32)GetValueOfDevice(d);
+    return hval << 16 | lval;
+  }
+
+  public void SetUInt32ValueTo(UInt32 value, string device) {
+    var d = new LadderDriveDevice(device);
+    if (d.IsAvailable == false) { return; }
+    UInt16 lval = (UInt16)(value & 0xffff);
+    UInt16 hval = (UInt16)(value >> 16);
+
+    SetValueToDevice(lval, d);
+    d = d.NextDevice;
+    if (d.IsAvailable == false) { return; }
+    SetValueToDevice(hval, d);
+  }
+
+  public Int32 Int32ValueOf(string device) {
+    var dword = new DWordValue();
+    dword.uint32Value = UInt32ValueOf(device);
+    return dword.int32Value;
+  }
+
+  public void SetInt32ValueTo(Int32 value, string device) {
+    var dword = new DWordValue();
+    dword.int32Value = value;
+    SetUInt32ValueTo(dword.uint32Value, device);
+  }
+
+  public UInt16 UInt16ValueOf(string device) {
+    var d = new LadderDriveDevice(device);
+    if (d.IsAvailable == false) { return 0; }
+    return GetValueOfDevice(d);
+  }
+
+  public void SetUInt16ValueTo(UInt16 value, string device) {
+    var d = new LadderDriveDevice(device);
+    if (d.IsAvailable == false) { return; }
+    SetValueToDevice(value, d);
+  }
+
+  public Int16 Int16ValueOf(string device) {
+    var word = new WordValue();
+    word.uint16Value = UInt16ValueOf(device);
+    return word.int16Value;
+  }
+
+  public void SetInt16ValueTo(Int16 value, string device) {
+    var word = new WordValue();
+    word.int16Value = value;
+    SetUInt16ValueTo(word.uint16Value, device);
+  }
+
+  public float FloatValueOf(string device) {
+    var dword = new DWordValue();
+    dword.uint32Value = UInt32ValueOf(device);
+    return dword.floatValue;
+  }
+
+  public void SetFloatValueTo(float value, string device) {
+    var dword = new DWordValue();
+    dword.floatValue = value;
+    SetUInt32ValueTo(dword.uint32Value, device);
+  }
+
+  public string StringValueOf(string device) {
+    var res = "";
+    var word = new WordValue();
+    var d = new LadderDriveDevice(device);
+    while(true) {
+      if (d.IsAvailable == false) { return res; }
+      word.uint16Value = GetValueOfDevice(d);
+      if (word.highByteValue == 0) {
+        return res;
+      }
+      res += (char)word.lowByteValue;
+      if (word.lowByteValue == 0) {
+        return res;
+      }
+      res += (char)word.lowByteValue;
+    }
+    return "";
+  }
+
+  public void SetStringValueTo(string str, string device) {
+    var word = new WordValue();
+    var d = new LadderDriveDevice(device);
+    var index = 0;
+    foreach(char ch in str) {
+      if (d.IsAvailable == false) { return; }
+      if (index % 2 == 0) {
+        word.uint16Value = 0;
+        word.highByteValue = (byte)ch;
+        if (word.highByteValue == 0) {
+          SetValueToDevice(word.uint16Value, d);
+          break;
+        }
+      } else {
+        word.lowByteValue = (byte)ch;
+        SetValueToDevice(word.uint16Value, d);
+        if (word.lowByteValue == 0) {
+          break;
+        }
+        d = d.NextDevice;
+      }
+      index++;
+    }
   }
 
 }
