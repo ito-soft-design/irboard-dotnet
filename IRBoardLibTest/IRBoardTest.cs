@@ -121,7 +121,6 @@ public class IRBoardTest
         Assert.AreEqual("", irboard.StringValueOf("D0"));
     }
 
-    [Ignore]
     [TestMethod]
     public void StringValueOf_Setable()
     {
