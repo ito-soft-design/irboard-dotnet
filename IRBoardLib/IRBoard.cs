@@ -327,7 +327,7 @@ public class IRBoard
     SetUInt32ValueTo(dword.uint32Value, device);
   }
 
-  public string StringValueOf(string device) {
+  public string StringValueOf(string device, int length = 0) {
     var res = "";
     var word = new WordValue();
     var d = new LadderDriveDevice(device);
@@ -338,26 +338,36 @@ public class IRBoard
         return res;
       }
       res += (char)word.highByteValue;
+      if (length != 0 && res.Length >= length) {
+        return res;
+      }
+
       if (word.lowByteValue == 0) {
         return res;
       }
       res += (char)word.lowByteValue;
+      if (length != 0 && res.Length >= length) {
+        return res;
+      }
       d = d.NextDevice;
     }
   }
 
-  public void SetStringValueTo(string str, string device) {
+  public void SetStringValueTo(string str, string device, int length = 0) {
     var word = new WordValue();
     var d = new LadderDriveDevice(device);
     var index = 0;
     bool terminated = false;
+    if (length != 0) {
+      str = str.Substring(0, length);
+    }
     foreach(char ch in str) {
       if (d.IsAvailable == false) { return; }
       if (index % 2 == 0) {
-        word.uint16Value = 0;
         word.highByteValue = (byte)ch;
         if (word.highByteValue == 0) {
           SetValueToDevice(word.uint16Value, d);
+          word.uint16Value = 0;
           terminated = true;
           break;
         }
@@ -368,12 +378,13 @@ public class IRBoard
           terminated = true;
           break;
         }
+        word.uint16Value = 0;
         d = d.NextDevice;
       }
       index++;
     }
     if (terminated == false) {
-      SetValueToDevice((UInt16)0, d);
+      SetValueToDevice(word.uint16Value, d);
     }
   }
 

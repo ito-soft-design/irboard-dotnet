@@ -129,5 +129,37 @@ public class IRBoardTest
         Assert.AreEqual("ABCDEFGH", irboard.StringValueOf("D0"));
     }
 
+    [TestMethod]
+    public void SetStringValueOf_WithOddLength()
+    {
+        IRBoard irboard = new IRBoard();
+        irboard.SetStringValueTo("ABCDEFGH", "D0", 3);
+        Assert.AreEqual("ABC", irboard.StringValueOf("D0", 3));
+    }
+
+    [TestMethod]
+    public void SetStringValueOf_WithEvenLength()
+    {
+        IRBoard irboard = new IRBoard();
+        irboard.SetStringValueTo("ABCDEFGH", "D0", 4);
+        Assert.AreEqual("ABCD", irboard.StringValueOf("D0", 4));
+    }
+
+    [TestMethod]
+    public void StringValueOf_WithOddLength()
+    {
+        IRBoard irboard = new IRBoard();
+        irboard.SetStringValueTo("ABCDEFGH", "D0");
+        Assert.AreEqual("ABC", irboard.StringValueOf("D0", 3));
+    }
+
+    [TestMethod]
+    public void StringValueOf_WithEvenLength()
+    {
+        IRBoard irboard = new IRBoard();
+        irboard.SetStringValueTo("ABCDEFGH", "D0");
+        Assert.AreEqual("ABCD", irboard.StringValueOf("D0", 4));
+    }
+
 
 }
