@@ -1,18 +1,19 @@
 ﻿using IRBoardLib;
+using System.Net;
+using System.Net.Sockets;
 
 class Program
 {
     static void Main(string[] args)
     {
-        PrintUses();
-
         IRBoard irboard = new IRBoard();
+        PrintUses(irboard);
         irboard.Run();
 
         do
         {
+            Console.Write("$ ");
             string? input = Console.ReadLine();
-            Console.WriteLine($"Input: {input}");
             if (input == "quit") {
               irboard.Stop();
               break;
@@ -20,13 +21,16 @@ class Program
         } while (true);
         return;
 
-        void PrintUses() {
+        void PrintUses(IRBoard irboard) {
             Console.Clear();
             Console.WriteLine(
-@"
+                $"Listening on {irboard.IPv4Addresses[0]} : {irboard.PortNo}"
+            );
+            Console.WriteLine(
+@"Create an irBoard project with LadderDrive in the Iot group.
+Set the above IP address and port no to it.
 
-Waiting a connection from irBoard. 
-If you want to quit; input 'quit' and press the 'return' key.
+If you want to quit, input 'quit' and press the 'return' key.
 "
             );
 

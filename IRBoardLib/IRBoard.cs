@@ -53,7 +53,7 @@ public class IRBoard
     listener = new TcpListener(ipAddress, PortNo);
     listener.Start();
 
-    Console.WriteLine("Launched a server. Waitting a connection from a client...");
+    Console.WriteLine("Launched a server and waiting for a connection from an irBoard ...");
 
     while (true)
     {
@@ -66,6 +66,19 @@ public class IRBoard
     }
   }
 
+  public IPAddress[] IPAddresses {
+    get {
+      return Dns.GetHostEntry(Dns.GetHostName()).AddressList;
+    }
+  }
+
+  public IPAddress[] IPv4Addresses {
+    get {
+      return Array.FindAll(IPAddresses, ip => 
+        ip.AddressFamily == AddressFamily.InterNetwork
+      );
+    }
+  }
 
   private object lockObj = "lockObj";
   private Dictionary<LadderDriveDevice, UInt16> deviceDict = new Dictionary<LadderDriveDevice, UInt16>();
