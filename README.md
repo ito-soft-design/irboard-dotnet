@@ -131,5 +131,5 @@ var val = StringValueOf("D0", 32); // D0 to D15
 
 ## Demo
 
-[![irBoard.NET DEMO](http://img.youtube.com/vi/ay3MLKFTLDc/0.jpg)](https://www.youtube.com/watch?v=ay3MLKFTLDc)
+[![irBoard.NET DEMO](http://img.youtube.com/vi/CF5ncDMtO-E/0.jpg)](https://www.youtube.com/watch?v=CF5ncDMtO-E)
 
