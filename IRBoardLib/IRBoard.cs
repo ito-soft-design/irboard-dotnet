@@ -347,18 +347,18 @@ public class IRBoard
     while(true) {
       if (d.IsAvailable == false) { return res; }
       word.uint16Value = GetValueOfDevice(d);
-      if (word.highByteValue == 0) {
-        return res;
-      }
-      res += (char)word.highByteValue;
-      if (length != 0 && res.Length >= length) {
-        return res;
-      }
-
       if (word.lowByteValue == 0) {
         return res;
       }
       res += (char)word.lowByteValue;
+      if (length != 0 && res.Length >= length) {
+        return res;
+      }
+
+      if (word.highByteValue == 0) {
+        return res;
+      }
+      res += (char)word.highByteValue;
       if (length != 0 && res.Length >= length) {
         return res;
       }
@@ -377,17 +377,17 @@ public class IRBoard
     foreach(char ch in str) {
       if (d.IsAvailable == false) { return; }
       if (index % 2 == 0) {
-        word.highByteValue = (byte)ch;
-        if (word.highByteValue == 0) {
+        word.lowByteValue = (byte)ch;
+        if (word.lowByteValue == 0) {
           SetValueToDevice(word.uint16Value, d);
           word.uint16Value = 0;
           terminated = true;
           break;
         }
       } else {
-        word.lowByteValue = (byte)ch;
+        word.highByteValue = (byte)ch;
         SetValueToDevice(word.uint16Value, d);
-        if (word.lowByteValue == 0) {
+        if (word.highByteValue == 0) {
           terminated = true;
           break;
         }
