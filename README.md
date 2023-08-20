@@ -113,7 +113,7 @@ X and Y should be used numbers as hex.
 All word devices are expressed UInt16 value internally.
 Using accessor methods, you can get various data types.
 
-If you use Dowrd size type (UInt32, Int32, Float), it uses the next device of the specified device. 
+If you use DWord size type (UInt32, Int32, Float), it uses the next device of the specified device. 
 
 ```
 // It generates UInt32 value form D0(lower byte) and D1 (higher byte)
