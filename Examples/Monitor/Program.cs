@@ -8,72 +8,94 @@ class Program
     {
         IRBoard irboard = new IRBoard();
         PrintUses(irboard);
-        irboard.Run();
+        irßboard.Run();
 
         do
         {
             Console.Write("$ ");
             string? input = Console.ReadLine();
-            if (input == "quit") {
-              irboard.Stop();
-              break;
+            if (input == "quit")
+            {
+                irboard.Stop();
+                break;
             }
             var a = input.Split(" ");
-            if (a.Length == 2) {
+            if (a.Length == 2)
+            {
                 // set
                 var lawVal = a[1];
                 var a2 = a[0].Split(".");
                 var d = a2[0];
-                if (a2.Length == 2) {
+                if (a2.Length == 2)
+                {
                     var t = a2[1];
-                    switch (t) {
+                    switch (t)
+                    {
                         case "u":
-                            try {
+                            try
+                            {
                                 var val = Int32.Parse(lawVal);
                                 irboard.SetInt32ValueTo(val, d);
-                            } catch {}
+                            }
+                            catch { }
                             break;
                         case "d":
-                            try {
+                            try
+                            {
                                 var val = Int32.Parse(lawVal);
                                 irboard.SetInt32ValueTo(val, d);
-                            } catch {}
+                            }
+                            catch { }
                             break;
                         case "ud":
-                            try {
+                            try
+                            {
                                 var val = UInt32.Parse(lawVal);
                                 irboard.SetUInt32ValueTo(val, d);
-                            } catch {}
+                            }
+                            catch { }
                             break;
                         case "f":
-                            try {
+                            try
+                            {
                                 var val = float.Parse(lawVal);
                                 irboard.SetFloatValueTo(val, d);
-                            } catch {}
+                            }
+                            catch { }
                             break;
                         case "s":
                             irboard.SetStringValueTo(lawVal, d);
                             break;
                         default:
-                            try {
+                            try
+                            {
                                 var val = UInt16.Parse(lawVal);
                                 irboard.SetUInt16ValueTo(val, d);
-                            } catch {}
+                            }
+                            catch { }
                             break;
                     }
-                } else {
-                    try {
+                }
+                else
+                {
+                    try
+                    {
                         var val = UInt16.Parse(lawVal);
                         irboard.SetUInt16ValueTo(val, d);
-                    } catch {}
+                    }
+                    catch { }
                 }
-            } else {
+            }
+            else
+            {
                 // get
                 var a2 = a[0].Split(".");
                 var d = a2[0];
-                if (a2.Length == 2) {
+                if (a2.Length == 2)
+                {
                     var t = a2[1];
-                    switch (t) {
+                    switch (t)
+                    {
                         case "u":
                             Console.WriteLine($"{d}: {irboard.UInt16ValueOf(d)}");
                             break;
@@ -93,14 +115,17 @@ class Program
                             Console.WriteLine($"{d}: {irboard.Int16ValueOf(d)}");
                             break;
                     }
-                } else {
+                }
+                else
+                {
                     Console.WriteLine($"{d}: {irboard.Int16ValueOf(d)}");
                 }
             }
         } while (true);
         return;
 
-        void PrintUses(IRBoard irboard) {
+        void PrintUses(IRBoard irboard)
+        {
             Console.Clear();
             Console.WriteLine(
                 $"Listening on {irboard.IPv4Addresses[0]} : {irboard.PortNo}"
