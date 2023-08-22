@@ -128,7 +128,7 @@ public class LadderDriveDevice
         return Name.GetHashCode();
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
         return obj is LadderDriveDevice device && Name == device.Name;
     }
