@@ -8,7 +8,7 @@ class Program
     {
         IRBoard irboard = new IRBoard();
         PrintUses(irboard);
-        irßboard.Run();
+        irboard.Run();
 
         do
         {
