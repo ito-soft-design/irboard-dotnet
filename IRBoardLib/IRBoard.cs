@@ -64,7 +64,7 @@ public class IRBoard
             Console.WriteLine("Connected with a new client");
 
             // クライアント接続ごとに処理を非同期で実行
-            _ = HandleClientAsync(this, client);
+            Task.Run(() => HandleClient(client));
         }
     }
 
@@ -202,7 +202,7 @@ public class IRBoard
         return "OK";
     }
 
-    private static async Task HandleClientAsync(IRBoard board, TcpClient client)
+    private void HandleClient(TcpClient client)
     {
         DateTime connectedAt = DateTime.Now;
 
@@ -227,22 +227,22 @@ public class IRBoard
                                     switch (elements[0].ToUpper())
                                     {
                                         case "RD":
-                                            response = board.RdResponse(elements);
+                                            response = RdResponse(elements);
                                             break;
                                         case "RDS":
-                                            response = board.RdsResponse(elements);
+                                            response = RdsResponse(elements);
                                             break;
                                         case "ST":
-                                            response = board.StResponse(elements);
+                                            response = StResponse(elements);
                                             break;
                                         case "RS":
-                                            response = board.RsResponse(elements);
+                                            response = RsResponse(elements);
                                             break;
                                         case "WR":
-                                            response = board.WrResponse(elements);
+                                            response = WrResponse(elements);
                                             break;
                                         case "WRS":
-                                            response = board.WrsResponse(elements);
+                                            response = WrsResponse(elements);
                                             break;
                                         default:
                                             response = "E1";

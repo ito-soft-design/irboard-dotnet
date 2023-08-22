@@ -29,14 +29,14 @@ public class IRBoardTest
         IRBoard irboard = new IRBoard();
         Assert.IsFalse(irboard.IsRunning);
 
-        Task.Run(async () =>
-        {
+        try {
             irboard.Run();
             Assert.IsTrue(irboard.IsRunning);
             irboard.Stop();
             Assert.IsFalse(irboard.IsRunning);
-        }).GetAwaiter().GetResult();
-
+        } finally {
+            irboard.Stop();
+        }
     }
 
    [TestMethod]
