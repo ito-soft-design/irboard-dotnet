@@ -7,6 +7,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IRBoardLib", "IRBoardLib\IR
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IRBoardLibTest", "IRBoardLibTest\IRBoardLibTest.csproj", "{1D82968B-9521-47FF-BE75-1345FADE0F7B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FormApp", "Examples\FormApp\FormApp.csproj", "{EA76C774-E8DC-4188-92C3-D0CEC800DDFF}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Monitor", "Examples\Monitor\Monitor.csproj", "{3747DD5F-D495-477C-9E95-B16E2033DD69}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,8 +25,19 @@ Global
 		{1D82968B-9521-47FF-BE75-1345FADE0F7B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1D82968B-9521-47FF-BE75-1345FADE0F7B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1D82968B-9521-47FF-BE75-1345FADE0F7B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EA76C774-E8DC-4188-92C3-D0CEC800DDFF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EA76C774-E8DC-4188-92C3-D0CEC800DDFF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EA76C774-E8DC-4188-92C3-D0CEC800DDFF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EA76C774-E8DC-4188-92C3-D0CEC800DDFF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3747DD5F-D495-477C-9E95-B16E2033DD69}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3747DD5F-D495-477C-9E95-B16E2033DD69}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3747DD5F-D495-477C-9E95-B16E2033DD69}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3747DD5F-D495-477C-9E95-B16E2033DD69}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {8E436989-13F1-42FD-A3AD-B9198048071F}
 	EndGlobalSection
 EndGlobal
