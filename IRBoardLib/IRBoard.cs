@@ -81,7 +81,7 @@ public class IRBoard
         get
         {
             return Array.FindAll(IPAddresses, ip =>
-              ip.AddressFamily == AddressFamily.InterNetwork
+                ip.AddressFamily == AddressFamily.InterNetwork
             );
         }
     }

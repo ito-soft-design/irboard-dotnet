@@ -127,9 +127,12 @@ class Program
         void PrintUses(IRBoard irboard)
         {
             Console.Clear();
-            Console.WriteLine(
-                $"Listening on {irboard.IPv4Addresses[0]} : {irboard.PortNo}"
-            );
+            foreach (IPAddress ip in irboard.IPv4Addresses)
+            {
+                Console.WriteLine(
+                    $"Listening on {ip} : {irboard.PortNo}"
+                );
+            }
             Console.WriteLine(
 @"Create an irBoard project with LadderDrive in the Iot group.
 Set the above IP address and port no to it.
