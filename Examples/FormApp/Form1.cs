@@ -87,6 +87,18 @@ namespace FormApp
             countLabel.Text = Count.ToString();
         }
 
+        private void UpdateSpeed()
+        {
+            if (Speed < 0.1)
+            {
+                timer.Interval = 100;
+            }
+            else
+            {
+                timer.Interval = (int)(Speed * 1000);
+            }
+        }
+
         private void startButton_Click(object sender, EventArgs e)
         {
             Start();
@@ -99,45 +111,68 @@ namespace FormApp
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            irboard.OnChanged += Irboard_OnChanged;
             irboard.Run();
             UpdateIpAddresses();
             Speed = 1.0f;
             ValidateControls();
         }
 
+        private void Form1_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            Stop();
+            irboard.Stop();
+            irboard.OnChanged -= Irboard_OnChanged;
+        }
+
         private void timer_Tick(object sender, EventArgs e)
         {
-            if (Speed < 0.1)
-            {
-                timer.Interval = 100;
-            }
-            else
-            {
-                timer.Interval = (int)(Speed * 1000);
-            }
             Count++;
             UpdateCount();
-
         }
 
         private void resetButton_Click(object sender, EventArgs e)
         {
             Count = 0;
+            UpdateCount();
         }
 
-        private void monitorTimer_Tick(object sender, EventArgs e)
+        private void Irboard_OnChanged(object? sender, IRBoardEventArgs e)
         {
-            if (exRunning != Running)
-            {
-                if (Running)
+            // If it's called from this, therefs nothing to be done.
+            if (this.InvokeRequired == false) { return; }
+
+            this.Invoke(
+                new Action(() =>
                 {
-                    Start();
-                }
-                else
-                {
-                    Stop();
-                }
-            }
+                    switch (e.DeviceName)
+                    {
+                        case "D0":
+                            UpdateCount();
+                            break;
+                        case "D3":
+                            UpdateSpeed();
+                            break;
+                        case "M0":
+                            if (exRunning != Running)
+                            {
+                                if (Running)
+                                {
+                                    Start();
+                                }
+                                else
+                                {
+                                    Stop();
+                                }
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+                })
+            );
+
         }
+
     }
 }

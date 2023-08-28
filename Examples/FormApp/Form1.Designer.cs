@@ -37,12 +37,12 @@
             timer = new System.Windows.Forms.Timer(components);
             ipAddressListBox = new ListBox();
             label3 = new Label();
-            monitorTimer = new System.Windows.Forms.Timer(components);
             SuspendLayout();
             // 
             // startButton
             // 
             startButton.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            startButton.Font = new Font("Yu Gothic UI", 19.875F, FontStyle.Regular, GraphicsUnit.Point);
             startButton.Location = new Point(590, 12);
             startButton.Name = "startButton";
             startButton.Size = new Size(198, 91);
@@ -54,6 +54,7 @@
             // stopButton
             // 
             stopButton.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            stopButton.Font = new Font("Yu Gothic UI", 19.875F, FontStyle.Regular, GraphicsUnit.Point);
             stopButton.Location = new Point(590, 120);
             stopButton.Name = "stopButton";
             stopButton.Size = new Size(198, 91);
@@ -65,17 +66,19 @@
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new Point(39, 340);
+            label1.Font = new Font("Yu Gothic UI", 19.875F, FontStyle.Regular, GraphicsUnit.Point);
+            label1.Location = new Point(58, 239);
             label1.Name = "label1";
-            label1.Size = new Size(79, 32);
+            label1.Size = new Size(172, 71);
             label1.TabIndex = 2;
             label1.Text = "Count";
             // 
             // countLabel
             // 
-            countLabel.Location = new Point(178, 340);
+            countLabel.Font = new Font("Yu Gothic UI", 19.875F, FontStyle.Regular, GraphicsUnit.Point);
+            countLabel.Location = new Point(277, 230);
             countLabel.Name = "countLabel";
-            countLabel.Size = new Size(201, 38);
+            countLabel.Size = new Size(271, 89);
             countLabel.TabIndex = 3;
             countLabel.Text = "0";
             countLabel.TextAlign = ContentAlignment.MiddleRight;
@@ -83,6 +86,7 @@
             // resetButton
             // 
             resetButton.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            resetButton.Font = new Font("Yu Gothic UI", 19.875F, FontStyle.Regular, GraphicsUnit.Point);
             resetButton.Location = new Point(590, 229);
             resetButton.Name = "resetButton";
             resetButton.Size = new Size(198, 91);
@@ -114,11 +118,6 @@
             label3.TabIndex = 6;
             label3.Text = "Listening IP Addresses:";
             // 
-            // monitorTimer
-            // 
-            monitorTimer.Enabled = true;
-            monitorTimer.Tick += monitorTimer_Tick;
-            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(13F, 32F);
@@ -133,6 +132,7 @@
             Controls.Add(startButton);
             Name = "Form1";
             Text = "Form1";
+            FormClosed += Form1_FormClosed;
             Load += Form1_Load;
             ResumeLayout(false);
             PerformLayout();
@@ -148,6 +148,5 @@
         private System.Windows.Forms.Timer timer;
         private ListBox ipAddressListBox;
         private Label label3;
-        private System.Windows.Forms.Timer monitorTimer;
     }
 }

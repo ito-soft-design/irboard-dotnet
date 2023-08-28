@@ -35,10 +35,22 @@ struct DWordValue
     public float floatValue;
 }
 
+public class IRBoardEventArgs
+{
+    public string DeviceName { get; private set; }
+
+    public IRBoardEventArgs(string deviceName)
+    {
+        this.DeviceName = deviceName;
+    }
+}
+
 
 public class IRBoard
 {
     public ushort PortNo = 5555;
+
+    public event EventHandler<IRBoardEventArgs>? OnChanged = null;
 
     public bool IsRunning
     {
@@ -57,14 +69,20 @@ public class IRBoard
 
         Console.WriteLine("Launched a server and waiting for a connection from an irBoard ...");
 
-        while (true)
+        while (IsRunning)
         {
-            TcpClient client = await listener.AcceptTcpClientAsync();
+            try
+            {
+                TcpClient client = await listener.AcceptTcpClientAsync();
 
-            Console.WriteLine("Connected with a new client");
+                Console.WriteLine("Connected with a new client");
 
-            // クライアント接続ごとに処理を非同期で実行
-            Task.Run(() => HandleClient(client));
+                // クライアント接続ごとに処理を非同期で実行
+                _ = Task.Run(() => HandleClient(client));
+            } catch(Exception e)
+            {
+                break;
+            }
         }
     }
 
@@ -89,6 +107,14 @@ public class IRBoard
     private object lockObj = "lockObj";
     private Dictionary<LadderDriveDevice, UInt16> deviceDict = new Dictionary<LadderDriveDevice, UInt16>();
 
+    private void HandleOnChanged(LadderDriveDevice device)
+    {
+        if (OnChanged == null) { return; }
+        var args = new IRBoardEventArgs(device.Name);
+        OnChanged(this, args);
+    }
+
+
     private UInt16 GetValueOfDevice(LadderDriveDevice device)
     {
         UInt16 val = 0;
@@ -104,9 +130,15 @@ public class IRBoard
 
     private void SetValueToDevice(UInt16 value, LadderDriveDevice device)
     {
-        lock (lockObj)
+        bool changed = false;
+        changed = GetValueOfDevice(device) != value;
+        if (changed)
         {
-            deviceDict[device] = value;
+            lock (lockObj)
+            {
+                deviceDict[device] = value;
+            }
+            HandleOnChanged(device);
         }
     }
 
