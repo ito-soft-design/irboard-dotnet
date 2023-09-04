@@ -139,8 +139,11 @@ namespace FormApp
 
         private void Irboard_OnChanged(object? sender, IRBoardEventArgs e)
         {
-            // If it's called from this, therefs nothing to be done.
+            // If it's called from this, there's nothing to be done.
             if (this.InvokeRequired == false) { return; }
+
+            // IRBoard invokes this function from the listening thread.
+            // Please ensure that all actions are performed within the Invoke() block.
 
             this.Invoke(
                 new Action(() =>
@@ -150,6 +153,11 @@ namespace FormApp
                         case "D0":
                             UpdateCount();
                             break;
+
+                        // Speed variables use two words, D2 and D3.
+                        // When you read Speed at notified with D2, the value of D3 is not yet reflected, 
+                        // which may cause incorrect speed results.
+                        // To prevent this, read it notified with D3 (last word).
                         case "D3":
                             UpdateSpeed();
                             break;

@@ -77,9 +77,10 @@ public class IRBoard
 
                 Console.WriteLine("Connected with a new client");
 
-                // クライアント接続ごとに処理を非同期で実行
+                // クライアント接続毎に処理を非同期で実行
                 _ = Task.Run(() => HandleClient(client));
-            } catch(Exception e)
+            }
+            catch (Exception e)
             {
                 break;
             }

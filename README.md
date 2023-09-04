@@ -5,13 +5,15 @@
 This library is for connection with irBoard.  
 irBoard is an iOS application. Your iOS device can be a touch panel device for FA equipment and IoT devices.  
 
-With irBoard.NET, you can effortlessly manage and monitor your .NET application using irBoard.
+And With irBoard.NET, you can effortlessly manage and monitor your .NET application using irBoard.
 
 [irBoard](https://irboard.itosoft.com/)
 
 ## Uses
 
-- Clone this repository.
+### Example - Monitor
+
+- Clone or download this repository.
 - Run the Monitor application in the Examples folder on a command prompt or terminal.
   ```
   cd Examples
@@ -36,10 +38,43 @@ With irBoard.NET, you can effortlessly manage and monitor your .NET application 
   $ 
   ```
 - Use an irBoard sample.  
-  Open [irBoard.NET Monitor.irboard](</Examples/irboard/irBoard.NET Monitor.irboard>) in your iOS device which is running irBoard.
-  Or send it by AirDrop.
+  Open [Monitor.irboard](</Examples/irboard/Monitor.irboard>) on irBoard. You should use air drop to pass a file.
 - Change the IP address of irBoard's project setting from displayed in your console.
 - Run the irBoard project.
+
+[![irBoard.NET DEMO](http://img.youtube.com/vi/CF5ncDMtO-E/0.jpg)](https://www.youtube.com/watch?v=CF5ncDMtO-E)
+
+
+### Example - FormApp
+
+The FormApp demo provides a demonstration of how to use irBoard.NET within a form application.  
+
+#### How to run
+
+- Clone or download this repository.
+- Open irboard-dotnet.sln by Microsoft Visual Studio.
+- Just run the FormApp  
+  ![](images/70C99C29.png)
+- The FormApp is able to run independently.  
+  - To start counting, press the Start button.  
+  - To stop counting, press the Stop button.  
+  - To reset the number of counts, press the Reset button when it is Stopping.  
+  ![](images/89D7E5EB.png)
+- Using irBoard you can operate or monitor this app. 
+  - Open [FormApp.irboard](Examples/irboard/FormApp.irboard) on irBoard. You should use air drop to pass a file.
+  - The IP addresses are shown in the FormApp.
+  - Select an accessible IP address in it.
+  - Set the IP address to Project config view of irBoard.
+    ![](images/1F750515.png)
+  - Run the project by pressing the Play button.
+The irBoard will establish communication with the FormApp.
+    ![](images/8731E18B.png)
+    - It can be used in a similar way to the FormApp.
+    - In addition, you can change the count-up speed.
+
+
+[![irBoard.NET FormApp DEMO](http://img.youtube.com/vi/yHF4XbEK3B3qoSzW/0.jpg)](https://www.youtube.com/watch?v=yHF4XbEK3B3qoSzW)
+
 
 ## How to use irBoard.NET
 
@@ -82,6 +117,57 @@ It is very simple just like three steps.
         - void SetInt16ValueTo(Int16 value, string device)
         - void SetFloatValueTo(float value, string device)
         - void SetStringValueTo(string str, string device, int length = 0)
+5. You can receive notifications for changes through an event.
+  ```
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            irboard.OnChanged += Irboard_OnChanged;
+        }
+
+        private void Irboard_OnChanged(object? sender, IRBoardEventArgs e)
+        {
+            // If it's called from this, there's nothing to be done.
+            if (this.InvokeRequired == false) { return; }
+
+            // IRBoard invokes this function from the listening thread.
+            // Please ensure that all actions are performed within the Invoke() block.
+
+            this.Invoke(
+                new Action(() =>
+                {
+                    switch (e.DeviceName)
+                    {
+                        case "D0":
+                            UpdateCount();
+                            break;
+
+                        // Speed variables use two words, D2 and D3.
+                        // When you read Speed at notified with D2, the value of D3 is not yet reflected, 
+                        // which may cause incorrect speed results.
+                        // To prevent this, read it notified with D3 (last word).
+                        case "D3":
+                            UpdateSpeed();
+                            break;
+                        case "M0":
+                            if (exRunning != Running)
+                            {
+                                if (Running)
+                                {
+                                    Start();
+                                }
+                                else
+                                {
+                                    Stop();
+                                }
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+                })
+            );
+  ```
+
 
 ## Devices
 
@@ -128,8 +214,4 @@ var val = StringValueOf("D0");
 // For safety, use it with length (byte size). It uses a maximum half of the length.
 var val = StringValueOf("D0", 32); // D0 to D15
 ```
-
-## Demo
-
-[![irBoard.NET DEMO](http://img.youtube.com/vi/CF5ncDMtO-E/0.jpg)](https://www.youtube.com/watch?v=CF5ncDMtO-E)
 
