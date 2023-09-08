@@ -73,8 +73,7 @@ The irBoard will establish communication with the FormApp.
     - In addition, you can change the count-up speed.
 
 
-[![irBoard.NET FormApp DEMO](http://img.youtube.com/vi/Nxla-o8pjq4/0.jpg)](https://www.youtube.com/watch?v=Nxla-o8pjq4)
-
+[![irBoard.NET FormApp DEMO](http://img.youtube.com/vi/0chxkpeaz3s/0.jpg)](https://www.youtube.com/watch?v=0chxkpeaz3s)
 
 ## How to use irBoard.NET
 
